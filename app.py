@@ -13,12 +13,10 @@ from core import ParkingSecuritySystem
 class ParkingSecurityApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Parking Security System")
+        self.root.title("ParkWatch Lite")
         self.root.geometry("1150x700")
-        self.root.configure(bg="#020617")  # fondo muy oscuro
+        self.root.configure(bg="#020617")  #fondo
         self.root.minsize(1000, 600)
-
-        # Estado interno
         self.video_path = None
         self.cap = None
         self.out = None
@@ -29,30 +27,29 @@ class ParkingSecurityApp:
         self.output_video_path = "output_detection.mp4"
         self.report_path = "detection_report.json"
 
-        # Para el reproductor del video procesado
+        #reproductor del video procesado
         self.review_cap = None
         self.review_total_frames = 0
         self.review_slider = None
         self.video_controls_frame = None
 
-        # Historial de alertas
+        #historial de alertas
         self.last_alert_index = 0
 
-        # Colores
+        #colores
         self.bg_color = "#020617"
         self.panel_color = "#030712"
         self.accent_color = "#3b82f6"
         self.text_color = "#e5e7eb"
-        self.subtle_text = "#9ca3af"
+        self.subtle_text = "#94ff7a"
 
         self.build_layout()
 
     def build_layout(self):
-        # Frame principal
         main_frame = tk.Frame(self.root, bg=self.bg_color)
         main_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Panel de video (izquierda)
+        #panel de video
         video_frame = tk.Frame(main_frame, bg=self.panel_color, bd=0, highlightthickness=0)
         video_frame.pack(side="left", fill="both", expand=True, padx=(0, 8))
 
@@ -61,7 +58,7 @@ class ParkingSecurityApp:
 
         title_label = tk.Label(
             title_bar,
-            text="Vista en tiempo real",
+            text="Ver. 0.0000000003",
             bg=self.panel_color,
             fg=self.text_color,
             font=("Segoe UI", 13, "bold"),
@@ -70,14 +67,13 @@ class ParkingSecurityApp:
 
         subtitle_label = tk.Label(
             title_bar,
-            text="Detección de personas cerca de vehículos con YOLO",
+            text="Esteban Vargas, Carlos Garzon, Sebastian Rivas",
             bg=self.panel_color,
             fg=self.subtle_text,
             font=("Segoe UI", 9),
         )
         subtitle_label.pack(side="left", padx=(10, 0))
 
-        # Contenedor del video con tamaño fijo
         self.video_container = tk.Frame(
             video_frame,
             bg="black",
@@ -90,10 +86,24 @@ class ParkingSecurityApp:
         self.video_label_widget = tk.Label(self.video_container, bg="black")
         self.video_label_widget.pack(fill="both", expand=True)
 
-        # Aquí pondremos los controles del video resultante (slider)
+        #slider
         self.video_controls_frame = None
 
-        # Panel lateral derecho (controles e info)
+         #logo
+        logo_img = Image.open("logo.png")
+        logo_img = logo_img.resize((200, 200), Image.LANCZOS)
+        self.logo_tk = ImageTk.PhotoImage(logo_img)
+
+        self.logo_label = tk.Label(
+            video_frame,
+            image=self.logo_tk,
+            bg=self.panel_color
+        )
+        self.logo_label.pack(pady=(0, 10))
+
+
+
+        #panel derecho
         side_frame = tk.Frame(main_frame, bg=self.panel_color, bd=0, highlightthickness=0, width=300)
         side_frame.pack(side="right", fill="y", padx=(8, 0))
         side_frame.pack_propagate(False)
@@ -118,7 +128,7 @@ class ParkingSecurityApp:
         )
         panel_subtitle.pack(pady=(0, 15), padx=15, anchor="w")
 
-        # Info de video
+        #Info
         self.video_info_label = tk.Label(
             side_frame,
             text="Ningún video seleccionado",
@@ -130,7 +140,7 @@ class ParkingSecurityApp:
         )
         self.video_info_label.pack(pady=(0, 10), padx=15, anchor="w")
 
-        # Botones
+        #botones
         buttons_frame = tk.Frame(side_frame, bg=self.panel_color)
         buttons_frame.pack(pady=(0, 15), padx=15, anchor="w")
 
@@ -153,7 +163,7 @@ class ParkingSecurityApp:
             buttons_frame,
             text="Iniciar análisis",
             command=self.run_analysis,
-            bg="#111827",
+            bg="#002C8D",
             fg=self.text_color,
             activebackground="#1f2937",
             activeforeground=self.text_color,
@@ -165,10 +175,10 @@ class ParkingSecurityApp:
         )
         self.run_button.grid(row=0, column=1, padx=(5, 0))
 
-        # Estado y progreso
+        #progreso
         self.status_label = tk.Label(
             side_frame,
-            text="Estado: esperando selección de video",
+            text="Selecciona un video y comienza el análisis...",
             bg=self.panel_color,
             fg=self.subtle_text,
             font=("Segoe UI", 9),
@@ -193,7 +203,7 @@ class ParkingSecurityApp:
             side_frame,
             text="Sin alertas activas",
             bg=self.panel_color,
-            fg="#f97316",  # naranja
+            fg="#2563eb",
             font=("Segoe UI", 9, "bold"),
             justify="left",
             wraplength=260,
@@ -339,7 +349,7 @@ class ParkingSecurityApp:
         # Actualizar UI
         self.run_button.config(state="disabled")
         self.select_button.config(state="disabled")
-        self.status_label.config(text="Estado: procesando video en tiempo real...")
+        self.status_label.config(text="Procesando video...")
         self.progress_label.config(text="Progreso: 0.0%")
         self.alert_status_label.config(text="Sin alertas activas")
         self.result_label.config(text="")
@@ -410,13 +420,13 @@ class ParkingSecurityApp:
                 ts = ev.get("timestamp", "")
                 text = (
                     f"{ts}\n"
-                    f"Persona cerca de vehículo\n"
+                    f"Comportamiento sospechoso detectado\n"
                     f"Duración: {dur:.1f}s  |  Distancia: {dist:.1f}"
                 )
                 card = tk.Label(
                     self.alerts_frame,
                     text=text,
-                    bg="#16a34a",  # verde
+                    bg="#8a0000",
                     fg="white",
                     font=("Segoe UI", 8),
                     justify="left",
@@ -528,7 +538,7 @@ class ParkingSecurityApp:
 
         slider_label = tk.Label(
             self.video_controls_frame,
-            text="Revisión del video procesado (mueve el control para adelantar/atrasar):",
+            text="Mueve la barra para adelantar o atrasar el video",
             bg=self.panel_color,
             fg=self.subtle_text,
             font=("Segoe UI", 9),
