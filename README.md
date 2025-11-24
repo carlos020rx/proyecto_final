@@ -15,7 +15,7 @@ Incluye:
 
 ---
 
-## 📌 Características principales
+##  Características principales
 
 - Detección de personas y vehículos en video usando **YOLOv8**.
 - Seguimiento robusto mediante **ByteTrack**.
@@ -29,7 +29,7 @@ Incluye:
 
 ---
 
-## 📦 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ####  📁 ParkingSecuritySystem
 #### │
@@ -43,7 +43,7 @@ Incluye:
 
 ---
 
-## ⚙️ Requerimientos
+##  Requerimientos
 
 - Python **3.8+**
 - Windows / Linux / macOS
@@ -51,7 +51,7 @@ Incluye:
 
 ---
 
-# 🚀 Instalación
+#  Instalación
 
 ### **1. Clonar el repositorio o Descargar el respositorio**
 
@@ -72,7 +72,7 @@ pip install ultralytics opencv-python numpy
 
 ---
 
-## ▶️ Uso del sistema
+## Uso del sistema
 
 ### **1. Ejecutar la aplicación**
 
@@ -104,7 +104,7 @@ Haciendo uso del boton "seleccionar video"
 #### 4. Usar el reproductor integrado para avanzar manualmente por el video usando el slider.
 
 
-## 📊 Salidas generadas
+##  Salidas generadas
 
 En la carpeta resultados/ encontrarás:
 
@@ -117,7 +117,7 @@ Video con:
   - Anotaciones visuales
   - Identificadores únicos por objeto
 
-📄 reporte.json
+ reporte.json
 
 Incluye:
 
