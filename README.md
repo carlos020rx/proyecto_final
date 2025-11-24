@@ -1,4 +1,7 @@
-# 🛡️ Parking Security System – Detección de Actividad Sospechosa
+# 🛡️ Park Wacth Lite
+
+<img width="616" height="422" alt="image" src="https://github.com/user-attachments/assets/c5de8b49-b76f-4d3f-9d56-9f8c43af70c1" />
+
 
 Sistema de visión por computadora diseñado para detectar interacciones sospechosas entre personas y vehículos en parqueaderos residenciales.  
 A partir del modelo YOLOv8 y el seguimiento persistente ByteTrack, el sistema identifica presencia humana cerca de vehículos, evalúa proximidad en el tiempo y emite alertas cuando se detecta posible manipulación no autorizada.
