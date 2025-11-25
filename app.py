@@ -27,7 +27,7 @@ class ParkingSecurityApp:
         self.output_video_path = "output_detection.mp4"
         self.report_path = "detection_report.json"
 
-        #reproductor del video procesado
+        #reproductor video procesado
         self.review_cap = None
         self.review_total_frames = 0
         self.review_slider = None
@@ -150,7 +150,7 @@ class ParkingSecurityApp:
             command=self.select_video,
             bg=self.accent_color,
             fg="white",
-            activebackground="#2563eb",
+            activebackground="#00ff66",
             activeforeground="white",
             relief="flat",
             font=("Segoe UI", 10, "bold"),
@@ -198,7 +198,6 @@ class ParkingSecurityApp:
         )
         self.progress_label.pack(pady=(0, 5), padx=15, anchor="w")
 
-        # Estado de alertas activas (texto pequeño)
         self.alert_status_label = tk.Label(
             side_frame,
             text="Sin alertas activas",
@@ -210,7 +209,6 @@ class ParkingSecurityApp:
         )
         self.alert_status_label.pack(pady=(8, 4), padx=15, anchor="w")
 
-        # Título historial de alertas
         history_title = tk.Label(
             side_frame,
             text="Historial de alertas",
@@ -221,7 +219,7 @@ class ParkingSecurityApp:
         )
         history_title.pack(pady=(4, 2), padx=15, anchor="w")
 
-        # Contenedor scrollable para las tarjetas de alertas
+        # Contenedor de alertas
         alerts_container = tk.Frame(side_frame, bg=self.panel_color)
         alerts_container.pack(fill="both", expand=True, padx=15, pady=(0, 10), anchor="nw")
 
@@ -266,9 +264,7 @@ class ParkingSecurityApp:
         )
         self.result_label.pack(pady=(5, 5), padx=15, anchor="w")
 
-    # -------------------------------------------------
-    # Lógica de UI
-    # -------------------------------------------------
+    #logica ui
     def select_video(self):
         filetypes = [
             ("Videos", "*.mp4 *.avi *.mov *.mkv"),
@@ -327,7 +323,7 @@ class ParkingSecurityApp:
             self.video_controls_frame = None
 
         # Crear sistema YOLO
-        self.system = ParkingSecuritySystem(model_path="yolov8n.pt", confidence=0.5)
+        self.system = ParkingSecuritySystem(model_path="yolov8m.pt", confidence=0.5)
 
         # Abrir video
         self.cap = cv2.VideoCapture(self.video_path)
@@ -512,22 +508,18 @@ class ParkingSecurityApp:
             f"Reporte JSON:\n{os.path.abspath(self.report_path)}",
         )
 
-    # -------------------------------------------------
-    # Reproductor del video procesado (slider manual)
-    # -------------------------------------------------
+    #slider
     def setup_result_player(self):
-        # Si no existe el video, nada
         if not os.path.exists(self.output_video_path):
             return
-
-        # Cerrar reproductor previo
+        
         if self.review_cap:
             self.review_cap.release()
 
         self.review_cap = cv2.VideoCapture(self.output_video_path)
         self.review_total_frames = int(self.review_cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        # Crear frame de controles debajo del video
+        #controles
         if self.video_controls_frame:
             self.video_controls_frame.destroy()
 
@@ -562,11 +554,10 @@ class ParkingSecurityApp:
         )
         self.review_slider.pack(anchor="w")
 
-        # Mostrar primer frame
         self.show_review_frame(0)
 
+    #mover el slider
     def on_review_slider_change(self, value):
-        # Llamado cuando el usuario mueve el slider
         idx = int(float(value))
         self.show_review_frame(idx)
 
@@ -574,7 +565,6 @@ class ParkingSecurityApp:
         if not self.review_cap:
             return
 
-        # Posicionar el video en el frame deseado
         self.review_cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
         ret, frame = self.review_cap.read()
         if not ret:

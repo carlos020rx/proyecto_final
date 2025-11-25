@@ -10,24 +10,23 @@ import os
 
 
 class ParkingSecuritySystem:
-    """Sistema de seguridad para detección de manipulación de vehículos"""
 
     def __init__(
         self,
-        model_path="yolov8l.pt",
+        model_path="yolov8m.pt",
         confidence=0.5,
         proximity_threshold=100,
         loitering_time_threshold=5,
     ):
         self.model = YOLO(model_path)
 
-        # Activar tracker
+        #tracker
         self.use_tracker = True
         self.tracker_config = "bytetrack.yaml"
 
         self.confidence = confidence
 
-        # Clases COCO
+        #Clases
         self.vehicle_classes = [2, 3, 5, 7]
         self.person_class = 0
 
@@ -38,9 +37,7 @@ class ParkingSecuritySystem:
         self.last_detection_time = defaultdict(float)
         self.alert_triggered = set()
 
-    # ======================
-    #  IOU FUNCTION
-    # ======================
+
     def bbox_iou(self, boxA, boxB):
         xA = max(boxA[0], boxB[0])
         yA = max(boxA[1], boxB[1])
@@ -55,9 +52,8 @@ class ParkingSecuritySystem:
             return 0
         return interArea / float(boxAArea + boxBArea - interArea)
 
-    # ======================
-    # DETECCIÓN DE ACTIVIDAD
-    # ======================
+
+    #Funcion principal
     def detect_suspicious_activity(self, persons, vehicles, current_time):
         suspicious = []
 
@@ -66,10 +62,9 @@ class ParkingSecuritySystem:
 
                 key = f"{person_id}-{vehicle_id}"
 
-                # IOU real
                 iou = self.bbox_iou(person_box, vehicle_box)
 
-                # Área expandida del vehículo
+                # expandir area del vehículo
                 vx1, vy1, vx2, vy2 = vehicle_box
                 expanded = [
                     vx1 - 40, vy1 - 40,
@@ -95,18 +90,16 @@ class ParkingSecuritySystem:
                         self.alert_triggered.add(key)
 
                 else:
-                    # Persistencia de 2s
+                    #persistencia
                     if key in self.last_detection_time:
                         if current_time - self.last_detection_time[key] > 2:
                             del self.last_detection_time[key]
                             if key in self.alert_triggered:
                                 self.alert_triggered.remove(key)
 
-        return suspicious  # ← CORRECTO AQUÍ
+        return suspicious
 
-    # ======================
-    # DRAW DETECTIONS
-    # ======================
+    #Dibujado
     def draw_detections(self, frame, results, suspicious_activities):
         annotated_frame = frame.copy()
 
@@ -123,7 +116,7 @@ class ParkingSecuritySystem:
                     label = f"Persona {track_id}"
                 elif cls in self.vehicle_classes:
                     color = (0, 255, 0)
-                    label = f"Vehículo {track_id}"
+                    label = f"Vehiculo {track_id}"
                 else:
                     continue
 
@@ -139,15 +132,13 @@ class ParkingSecuritySystem:
             x1, y1, x2, y2 = map(int, person_box)
             cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 0, 255), 3)
 
-            alert_text = f"ALERTA! {duration:.1f}s cerca del vehículo"
+            alert_text = f"ALERTA {duration:.1f}s cerca del vehiculo"
             cv2.putText(annotated_frame, alert_text, (x1, y1 - 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
         return annotated_frame
 
-    # ======================
-    # PROCESS FRAME
-    # ======================
+    #procesar frame
     def process_frame(self, frame, current_time):
 
         if self.use_tracker:
